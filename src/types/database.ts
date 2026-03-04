@@ -14,7 +14,7 @@ export interface Database {
           settings: Json;
           google_drive_folder_id: string | null;
           notification_config: Json;
-          subscription_tier: "starter" | "professional" | "enterprise";
+          subscription_tier: "starter" | "standard" | "premium";
           is_active: boolean;
           created_at: string;
           updated_at: string;

@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "BuxibanOS",
+    "slug": "buxibanos",
+    "version": "1.0.0",
+    "scheme": "buxibanos",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1A3A5C"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.buxibanos.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1A3A5C"
+      },
+      "package": "com.buxibanos.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-secure-store",
+      "expo-asset",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow BuxibanOS to access your photos for sending images in messages.",
+          "cameraPermission": "Allow BuxibanOS to use the camera for sending photos in messages."
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow BuxibanOS to use the microphone for voice messages and speech-to-text."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#1A3A5C"
+        }
+      ],
+      "expo-document-picker",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

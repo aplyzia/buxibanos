@@ -3,6 +3,7 @@ import { View, Text, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTierGate } from "@/hooks/use-tier-gate";
 import { useMessagesStore } from "@/stores/messages-store";
 import { LanguageToggle } from "@/components/common/language-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -111,6 +112,7 @@ export default function DashboardScreen() {
     return Math.floor((Date.now() - oldest) / 60000);
   };
 
+  const { allowed: hasBriefing } = useTierGate("standard");
   const staffName = profile && "full_name" in profile ? profile.full_name : "";
   const hour = new Date().getHours();
   const greetingKey =
@@ -208,17 +210,19 @@ export default function DashboardScreen() {
             {t("dashboard.quickLinks")}
           </Text>
           <View className="flex-row gap-3">
-            <Pressable
-              onPress={() => router.push("/(staff)/briefing")}
-              className="flex-1 active:opacity-80"
-            >
-              <GlassCard className="px-3 py-3 items-center">
-                <Text className="text-xl mb-1">☀️</Text>
-                <Text className="text-xs font-medium text-center" style={{ color: colors.textPrimary }}>
-                  {t("dashboard.briefing")}
-                </Text>
-              </GlassCard>
-            </Pressable>
+            {hasBriefing && (
+              <Pressable
+                onPress={() => router.push("/(staff)/briefing")}
+                className="flex-1 active:opacity-80"
+              >
+                <GlassCard className="px-3 py-3 items-center">
+                  <Text className="text-xl mb-1">☀️</Text>
+                  <Text className="text-xs font-medium text-center" style={{ color: colors.textPrimary }}>
+                    {t("dashboard.briefing")}
+                  </Text>
+                </GlassCard>
+              </Pressable>
+            )}
             <Pressable
               onPress={() => router.push("/(staff)/announcements" as any)}
               className="flex-1 active:opacity-80"

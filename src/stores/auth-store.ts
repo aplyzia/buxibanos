@@ -5,12 +5,14 @@ import { Staff, Parent } from "@/types/database";
 import i18n from "@/i18n";
 
 type UserRole = "director" | "teacher" | "admin" | "front_desk" | "parent";
+export type SubscriptionTier = "starter" | "standard" | "premium";
 
 interface AuthState {
   session: Session | null;
   role: UserRole | null;
   profile: Staff | Parent | null;
   organizationId: string | null;
+  subscriptionTier: SubscriptionTier | null;
   isLoading: boolean;
   error: string | null;
 
@@ -25,6 +27,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   role: null,
   profile: null,
   organizationId: null,
+  subscriptionTier: null,
   isLoading: true,
   error: null,
 
@@ -50,7 +53,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (session) {
         await resolveRole(session.user.id, set);
       } else {
-        set({ role: null, profile: null, organizationId: null });
+        set({ role: null, profile: null, organizationId: null, subscriptionTier: null });
       }
     });
   },
@@ -79,6 +82,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       role: null,
       profile: null,
       organizationId: null,
+      subscriptionTier: null,
       isLoading: false,
       error: null,
     });
@@ -102,10 +106,16 @@ async function resolveRole(
     .single();
 
   if (staffRow) {
+    const { data: orgRow } = await supabase
+      .from("organizations")
+      .select("subscription_tier")
+      .eq("id", staffRow.organization_id)
+      .single();
     set({
       role: staffRow.role as UserRole,
       profile: staffRow,
       organizationId: staffRow.organization_id,
+      subscriptionTier: (orgRow?.subscription_tier ?? null) as SubscriptionTier | null,
       isLoading: false,
     });
     return;
@@ -119,10 +129,16 @@ async function resolveRole(
     .single();
 
   if (parentRow) {
+    const { data: orgRow } = await supabase
+      .from("organizations")
+      .select("subscription_tier")
+      .eq("id", parentRow.organization_id)
+      .single();
     set({
       role: "parent",
       profile: parentRow,
       organizationId: parentRow.organization_id,
+      subscriptionTier: (orgRow?.subscription_tier ?? null) as SubscriptionTier | null,
       isLoading: false,
     });
     return;

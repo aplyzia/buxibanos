@@ -26,6 +26,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { useAuthStore } from "@/stores/auth-store";
 import { useAnnouncementsStore } from "@/stores/announcements-store";
+import { useTierGate } from "@/hooks/use-tier-gate";
 import { uploadImage, uploadDocument, uploadVideo } from "@/lib/upload-media";
 import { supabase } from "@/lib/supabase";
 import GlassBackground from "@/components/common/glass-background";
@@ -63,8 +64,11 @@ export default function CreateAnnouncementScreen() {
   const [responseOptions, setResponseOptions] = useState<string[]>(["", ""]);
   const [allowFreeText, setAllowFreeText] = useState(false);
 
+  const [aiPolish, setAiPolish] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { allowed: isPremium } = useTierGate("premium");
 
   // Data for target pickers
   const [availableClasses, setAvailableClasses] = useState<
@@ -333,6 +337,30 @@ export default function CreateAnnouncementScreen() {
               textAlignVertical="top"
             />
           </View>
+
+          {/* AI Polish — Premium only */}
+          {isPremium && (
+            <View className="mb-4">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-1 mr-4">
+                  <Text
+                    className="text-sm font-medium"
+                    style={{ color: colors.textSecondary }}
+                  >
+                    {t("announcements.aiPolish")}
+                  </Text>
+                  <Text className="text-xs mt-0.5" style={{ color: colors.textMuted }}>
+                    {t("announcements.aiPolishHint")}
+                  </Text>
+                </View>
+                <Switch
+                  value={aiPolish}
+                  onValueChange={setAiPolish}
+                  trackColor={{ false: colors.surfaceBorder, true: colors.accentColor }}
+                />
+              </View>
+            </View>
+          )}
 
           {/* Priority toggle */}
           <View className="mb-4">

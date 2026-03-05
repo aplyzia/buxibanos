@@ -220,7 +220,8 @@
     "insights": "重點摘要",
     "weeklyTitle": "週報",
     "noData": "尚無資料",
-    "errorRetry": "無法載入早報，點擊重試"
+    "errorRetry": "無法載入早報，點擊重試",
+    "tierGated": "日報與週報功能適用於標準版與進階版方案"
   },
   "announcements": {
     "title": "公告",
@@ -282,7 +283,9 @@
     "allAnnouncements": "所有公告",
     "maxOptionsReached": "最多 4 個選項",
     "removeAttachment": "移除",
-    "viewDetails": "查看詳情"
+    "viewDetails": "查看詳情",
+    "aiPolish": "AI 潤稿",
+    "aiPolishHint": "Claude AI 將在發送前優化您的訊息內容"
   },
   "documents": {
     "title": "文件庫",

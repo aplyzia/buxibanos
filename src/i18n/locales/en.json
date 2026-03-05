@@ -220,7 +220,8 @@
     "insights": "Key Insights",
     "weeklyTitle": "Weekly Report",
     "noData": "No data yet",
-    "errorRetry": "Could not load briefing. Tap to retry."
+    "errorRetry": "Could not load briefing. Tap to retry.",
+    "tierGated": "Daily briefings and weekly reports are available on Standard and Premium plans"
   },
   "announcements": {
     "title": "Announcements",
@@ -282,7 +283,9 @@
     "allAnnouncements": "All Announcements",
     "maxOptionsReached": "Maximum 4 options",
     "removeAttachment": "Remove",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "aiPolish": "AI Polish",
+    "aiPolishHint": "Claude AI will refine your message before sending"
   },
   "documents": {
     "title": "Documents",

@@ -14,6 +14,7 @@ import GlassCard from "@/components/common/glass-card";
 import { useTheme } from "@/theme";
 import { useAuthStore } from "@/stores/auth-store";
 import { useBriefingStore, BriefingSection } from "@/stores/briefing-store";
+import { useTierGate } from "@/hooks/use-tier-gate";
 
 type Tab = "morning" | "weekly";
 
@@ -44,13 +45,14 @@ export default function BriefingScreen() {
   const [activeTab, setActiveTab] = useState<Tab>("morning");
 
   const isAdmin = role === "director" || role === "admin";
+  const { allowed: tierAllowed } = useTierGate("standard");
 
   // Auto-fetch on mount for authorised users
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isAdmin || !tierAllowed) return;
     fetchMorningBrief();
     fetchWeeklyReport();
-  }, [isAdmin]);
+  }, [isAdmin, tierAllowed]);
 
   const isLoading = activeTab === "morning" ? isLoadingMorning : isLoadingWeekly;
   const brief = activeTab === "morning" ? morningBrief : weeklyReport;
@@ -63,6 +65,31 @@ export default function BriefingScreen() {
 
   function formatTime(iso: string) {
     return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+
+  // ── Tier gate ────────────────────────────────────────────────────────────
+  if (!tierAllowed) {
+    return (
+      <GlassBackground variant="staff">
+        <View className="pt-14 pb-3 px-4 flex-row items-center">
+          <Pressable
+            onPress={() => router.canGoBack() ? router.back() : router.replace("/(staff)/dashboard" as any)}
+            className="mr-3 p-1 rounded-full active:opacity-70"
+          >
+            <ChevronLeft size={24} color={colors.textPrimary} />
+          </Pressable>
+          <Text className="text-lg font-bold" style={{ color: colors.textPrimary }}>
+            {t("briefing.title")}
+          </Text>
+        </View>
+        <View className="flex-1 items-center justify-center px-8">
+          <Lock size={48} color={colors.textMuted} style={{ marginBottom: 16 }} />
+          <Text className="text-base text-center" style={{ color: colors.textMuted }}>
+            {t("briefing.tierGated")}
+          </Text>
+        </View>
+      </GlassBackground>
+    );
   }
 
   // ── Access denied ────────────────────────────────────────────────────────

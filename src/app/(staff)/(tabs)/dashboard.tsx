@@ -113,6 +113,7 @@ export default function DashboardScreen() {
   };
 
   const { allowed: hasBriefing } = useTierGate("standard");
+  const { allowed: hasAnalytics } = useTierGate("premium");
   const staffName = profile && "full_name" in profile ? profile.full_name : "";
   const hour = new Date().getHours();
   const greetingKey =
@@ -245,6 +246,19 @@ export default function DashboardScreen() {
                 </Text>
               </GlassCard>
             </Pressable>
+            {hasAnalytics && (
+              <Pressable
+                onPress={() => router.push("/(staff)/analytics" as any)}
+                className="flex-1 active:opacity-80"
+              >
+                <GlassCard className="px-3 py-3 items-center">
+                  <Text className="text-xl mb-1">📊</Text>
+                  <Text className="text-xs font-medium text-center" style={{ color: colors.textPrimary }}>
+                    {t("dashboard.analytics")}
+                  </Text>
+                </GlassCard>
+              </Pressable>
+            )}
           </View>
         </View>
       </View>

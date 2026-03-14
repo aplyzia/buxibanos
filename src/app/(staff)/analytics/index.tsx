@@ -143,7 +143,7 @@ export default function AnalyticsScreen() {
 
         supabase
           .from("fee_records")
-          .select("status, amount")
+          .select("status, amount_ntd")
           .eq("organization_id", orgId),
 
         supabase
@@ -190,7 +190,7 @@ export default function AnalyticsScreen() {
       const sumAmount = (status: string) =>
         feeRows
           .filter((f) => f.status === status)
-          .reduce((acc, f) => acc + (f.amount ?? 0), 0);
+          .reduce((acc, f) => acc + (f.amount_ntd ?? 0), 0);
       const fees: FeeStats = {
         paidCount: feeRows.filter((f) => f.status === "paid").length,
         pendingCount: feeRows.filter((f) => f.status === "pending").length,

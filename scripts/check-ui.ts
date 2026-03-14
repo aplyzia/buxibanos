@@ -66,7 +66,7 @@ async function main() {
     if (found > 0) {
       await emailInput.fill(CREDENTIALS.email);
       await page.locator('input[type="password"], input[placeholder="Enter your password"]').fill(CREDENTIALS.password);
-      await page.locator('text=Sign In').click();
+      await page.locator('text=Sign In').first().click();
       await page.waitForTimeout(4000);
     }
   }

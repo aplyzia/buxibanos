@@ -184,7 +184,19 @@
     "profile": "Student Profile",
     "status": "Status",
     "enrollmentDate": "Enrollment Date",
-    "notes": "Notes"
+    "notes": "Notes",
+    "parent": "Parent",
+    "phone": "Phone",
+    "email": "Email",
+    "noParent": "No parent linked",
+    "last30days": "Last 30 days",
+    "attendanceRate": "Attendance rate",
+    "noAttendance": "No attendance records",
+    "noFees": "No fee records",
+    "noRecentMessages": "No recent messages",
+    "statusActive": "Active",
+    "statusPaused": "Paused",
+    "statusWithdrawn": "Withdrawn"
   },
   "attendance": {
     "title": "Attendance",

@@ -184,7 +184,19 @@
     "profile": "學生資料",
     "status": "狀態",
     "enrollmentDate": "入學日期",
-    "notes": "備註"
+    "notes": "備註",
+    "parent": "家長",
+    "phone": "電話",
+    "email": "信箱",
+    "noParent": "尚未綁定家長",
+    "last30days": "近 30 天",
+    "attendanceRate": "出席率",
+    "noAttendance": "尚無出勤紀錄",
+    "noFees": "尚無繳費紀錄",
+    "noRecentMessages": "尚無近期訊息",
+    "statusActive": "在學",
+    "statusPaused": "暫停",
+    "statusWithdrawn": "退學"
   },
   "attendance": {
     "title": "出勤記錄",

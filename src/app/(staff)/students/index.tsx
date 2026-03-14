@@ -24,6 +24,7 @@ export default function StudentListScreen() {
   const organizationId = useAuthStore((s) => s.organizationId);
 
   const [students, setStudents] = useState<Student[]>([]);
+  const [teacherNames, setTeacherNames] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,20 +34,33 @@ export default function StudentListScreen() {
     setIsLoading(true);
     setError(null);
 
-    const { data, error: fetchError } = await supabase
-      .from("students")
-      .select("*")
-      .eq("organization_id", organizationId)
-      .eq("enrollment_status", "active")
-      .order("full_name", { ascending: true });
+    const [studentsRes, staffRes] = await Promise.all([
+      supabase
+        .from("students")
+        .select("*")
+        .eq("organization_id", organizationId)
+        .eq("enrollment_status", "active")
+        .order("full_name", { ascending: true }),
+      supabase
+        .from("staff")
+        .select("id, full_name")
+        .eq("organization_id", organizationId)
+        .eq("is_active", true),
+    ]);
 
-    if (fetchError) {
+    if (studentsRes.error) {
       setError(t("common.error"));
       setIsLoading(false);
       return;
     }
 
-    setStudents((data ?? []) as Student[]);
+    // Build teacher name map
+    const nameMap: Record<string, string> = {};
+    for (const s of staffRes.data ?? []) {
+      nameMap[s.id] = s.full_name;
+    }
+    setTeacherNames(nameMap);
+    setStudents((studentsRes.data ?? []) as Student[]);
     setIsLoading(false);
   }, [organizationId]);
 
@@ -129,7 +143,7 @@ export default function StudentListScreen() {
                       {t("students.grade")}: {item.grade_level}
                     </Text>
                     <Text className="text-xs" style={{ color: colors.textMuted }}>
-                      {t("students.teacher")}: {item.assigned_teacher_id?.slice(0, 8) ?? "-"}
+                      {t("students.teacher")}: {teacherNames[item.assigned_teacher_id] ?? "-"}
                     </Text>
                   </View>
                 </View>

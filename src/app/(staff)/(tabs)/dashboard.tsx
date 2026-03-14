@@ -2,11 +2,10 @@ import { useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { Settings } from "lucide-react-native";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTierGate } from "@/hooks/use-tier-gate";
 import { useMessagesStore } from "@/stores/messages-store";
-import { LanguageToggle } from "@/components/common/language-toggle";
-import { ThemeToggle } from "@/components/common/theme-toggle";
 import GlassBackground from "@/components/common/glass-background";
 import GlassCard from "@/components/common/glass-card";
 import { useTheme } from "@/theme";
@@ -83,7 +82,6 @@ export default function DashboardScreen() {
   const { colors } = useTheme();
   const organizationId = useAuthStore((s) => s.organizationId);
   const profile = useAuthStore((s) => s.profile);
-  const signOut = useAuthStore((s) => s.signOut);
   const {
     messages,
     highPriorityCount,
@@ -130,23 +128,17 @@ export default function DashboardScreen() {
             <Text className="text-sm" style={{ color: colors.textTertiary }}>
               {t(`dashboard.greeting.${greetingKey}`)}
             </Text>
-            <View className="flex-row items-center gap-2">
-              <ThemeToggle />
-              <LanguageToggle />
-              <Pressable
-                onPress={signOut}
-                className="px-3 py-1.5 rounded-full active:opacity-70"
-                style={{
-                  backgroundColor: colors.surfaceBg,
-                  borderWidth: 1,
-                  borderColor: colors.surfaceBorder,
-                }}
-              >
-                <Text className="text-xs font-medium" style={{ color: colors.textSecondary }}>
-                  {t("auth.signOut")}
-                </Text>
-              </Pressable>
-            </View>
+            <Pressable
+              onPress={() => router.push("/(staff)/settings" as any)}
+              className="w-10 h-10 items-center justify-center rounded-full active:opacity-70"
+              style={{
+                backgroundColor: colors.surfaceBg,
+                borderWidth: 1,
+                borderColor: colors.surfaceBorder,
+              }}
+            >
+              <Settings size={18} color={colors.textSecondary} />
+            </Pressable>
           </View>
           <Text className="text-2xl font-bold mt-0.5" style={{ color: colors.textPrimary }}>
             {staffName || "BuxibanOS"}

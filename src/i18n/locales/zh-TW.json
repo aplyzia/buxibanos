@@ -466,6 +466,28 @@
     "admin": "建立者",
     "noOtherStaff": "沒有其他可新增的成員"
   },
+  "settings": {
+    "title": "設定",
+    "profile": "個人資料",
+    "name": "姓名",
+    "role": "角色",
+    "email": "信箱",
+    "notifications": "通知設定",
+    "notifHint": "選擇您要接收的通知類型",
+    "notif_all": "全部",
+    "notif_urgent_only": "僅緊急",
+    "notif_urgent_and_digest": "緊急 + 摘要",
+    "notif_digest_only": "僅摘要",
+    "appearance": "外觀",
+    "theme": "主題",
+    "language": "語言",
+    "roleDirector": "園長",
+    "roleAdmin": "管理員",
+    "roleFrontDesk": "櫃台",
+    "roleTeacher": "老師",
+    "signOutConfirmTitle": "登出",
+    "signOutConfirmBody": "確定要登出嗎？"
+  },
   "tabs": {
     "dashboard": "總覽",
     "messages": "訊息",

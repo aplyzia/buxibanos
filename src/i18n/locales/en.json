@@ -466,6 +466,28 @@
     "admin": "Creator",
     "noOtherStaff": "No other staff to add"
   },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "name": "Name",
+    "role": "Role",
+    "email": "Email",
+    "notifications": "Notifications",
+    "notifHint": "Choose which notifications you receive",
+    "notif_all": "All",
+    "notif_urgent_only": "Urgent only",
+    "notif_urgent_and_digest": "Urgent + Digest",
+    "notif_digest_only": "Digest only",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "language": "Language",
+    "roleDirector": "Director",
+    "roleAdmin": "Admin",
+    "roleFrontDesk": "Front Desk",
+    "roleTeacher": "Teacher",
+    "signOutConfirmTitle": "Sign Out",
+    "signOutConfirmBody": "Are you sure you want to sign out?"
+  },
   "tabs": {
     "dashboard": "Dashboard",
     "messages": "Messages",

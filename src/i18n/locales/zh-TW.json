@@ -196,7 +196,9 @@
     "noRecentMessages": "尚無近期訊息",
     "statusActive": "在學",
     "statusPaused": "暫停",
-    "statusWithdrawn": "退學"
+    "statusWithdrawn": "退學",
+    "attendanceAlert": "近 30 天內缺席 {{count}} 次",
+    "attendanceAlertHint": "經常缺席 — 可能需要聯繫家長"
   },
   "attendance": {
     "title": "出勤記錄",

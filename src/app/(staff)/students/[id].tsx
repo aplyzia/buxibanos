@@ -21,8 +21,10 @@ import {
   CalendarCheck,
   DollarSign,
   MessageSquare,
+  AlertTriangle,
 } from "lucide-react-native";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTierGate } from "@/hooks/use-tier-gate";
 import { supabase } from "@/lib/supabase";
 import { Student, Attendance, FeeRecord, Message, Parent, Staff } from "@/types/database";
 import GlassBackground from "@/components/common/glass-background";
@@ -36,6 +38,7 @@ export default function StudentDetailScreen() {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const organizationId = useAuthStore((s) => s.organizationId);
+  const { allowed: hasPatternFlags } = useTierGate("standard");
 
   const [student, setStudent] = useState<Student | null>(null);
   const [teacher, setTeacher] = useState<Staff | null>(null);
@@ -318,6 +321,22 @@ export default function StudentDetailScreen() {
           subtitle={t("students.last30days")}
           colors={colors}
         />
+
+        {/* Pattern flag: 3+ absences warning (Standard+) */}
+        {hasPatternFlags && absentCount >= 3 && (
+          <GlassCard className="p-3 mb-2" style={{ borderLeftWidth: 4, borderLeftColor: colors.highDot }}>
+            <View className="flex-row items-center" style={{ gap: 6 }}>
+              <AlertTriangle size={14} color={colors.errorText} />
+              <Text className="text-xs font-semibold" style={{ color: colors.errorText }}>
+                {t("students.attendanceAlert", { count: absentCount })}
+              </Text>
+            </View>
+            <Text className="text-xs mt-1 ml-5" style={{ color: colors.textSecondary }}>
+              {t("students.attendanceAlertHint")}
+            </Text>
+          </GlassCard>
+        )}
+
         {attendance.length > 0 ? (
           <GlassCard className="p-4 mb-4">
             <View className="flex-row justify-between mb-3">

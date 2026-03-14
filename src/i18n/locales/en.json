@@ -196,7 +196,9 @@
     "noRecentMessages": "No recent messages",
     "statusActive": "Active",
     "statusPaused": "Paused",
-    "statusWithdrawn": "Withdrawn"
+    "statusWithdrawn": "Withdrawn",
+    "attendanceAlert": "{{count}} absences in the last 30 days",
+    "attendanceAlertHint": "Recurring absence — may need parent follow-up"
   },
   "attendance": {
     "title": "Attendance",

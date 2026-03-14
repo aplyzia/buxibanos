@@ -9,10 +9,11 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Search } from "lucide-react-native";
+import { Search, AlertTriangle } from "lucide-react-native";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTierGate } from "@/hooks/use-tier-gate";
 import { supabase } from "@/lib/supabase";
-import { Student } from "@/types/database";
+import { Student, Attendance } from "@/types/database";
 import GlassBackground from "@/components/common/glass-background";
 import GlassCard from "@/components/common/glass-card";
 import { useTheme } from "@/theme";
@@ -23,18 +24,25 @@ export default function StudentListScreen() {
   const router = useRouter();
   const organizationId = useAuthStore((s) => s.organizationId);
 
+  const { allowed: hasPatternFlags } = useTierGate("standard");
+
   const [students, setStudents] = useState<Student[]>([]);
   const [teacherNames, setTeacherNames] = useState<Record<string, string>>({});
+  const [absenceCounts, setAbsenceCounts] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const since30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
 
   const fetchStudents = useCallback(async () => {
     if (!organizationId) return;
     setIsLoading(true);
     setError(null);
 
-    const [studentsRes, staffRes] = await Promise.all([
+    const queries: Promise<any>[] = [
       supabase
         .from("students")
         .select("*")
@@ -46,7 +54,24 @@ export default function StudentListScreen() {
         .select("id, full_name")
         .eq("organization_id", organizationId)
         .eq("is_active", true),
-    ]);
+    ];
+
+    // Fetch absence counts for pattern flags (Standard+)
+    if (hasPatternFlags) {
+      queries.push(
+        supabase
+          .from("attendance")
+          .select("student_id, status")
+          .eq("organization_id", organizationId)
+          .eq("status", "absent")
+          .gte("date", since30Days)
+      );
+    }
+
+    const results = await Promise.all(queries);
+    const studentsRes = results[0];
+    const staffRes = results[1];
+    const absenceRes = results[2];
 
     if (studentsRes.error) {
       setError(t("common.error"));
@@ -60,9 +85,19 @@ export default function StudentListScreen() {
       nameMap[s.id] = s.full_name;
     }
     setTeacherNames(nameMap);
+
+    // Build absence count map
+    if (absenceRes?.data) {
+      const counts: Record<string, number> = {};
+      for (const a of absenceRes.data as Attendance[]) {
+        counts[a.student_id] = (counts[a.student_id] ?? 0) + 1;
+      }
+      setAbsenceCounts(counts);
+    }
+
     setStudents((studentsRes.data ?? []) as Student[]);
     setIsLoading(false);
-  }, [organizationId]);
+  }, [organizationId, hasPatternFlags, since30Days]);
 
   useEffect(() => {
     fetchStudents();
@@ -135,9 +170,22 @@ export default function StudentListScreen() {
             >
               <GlassCard className="p-4 flex-row items-center justify-between">
                 <View className="flex-1">
-                  <Text className="text-base font-medium" style={{ color: colors.textPrimary }}>
-                    {item.full_name}
-                  </Text>
+                  <View className="flex-row items-center" style={{ gap: 6 }}>
+                    <Text className="text-base font-medium" style={{ color: colors.textPrimary }}>
+                      {item.full_name}
+                    </Text>
+                    {hasPatternFlags && (absenceCounts[item.id] ?? 0) >= 3 && (
+                      <View
+                        className="flex-row items-center px-1.5 py-0.5 rounded"
+                        style={{ backgroundColor: colors.highBg, gap: 2 }}
+                      >
+                        <AlertTriangle size={10} color={colors.errorText} />
+                        <Text className="text-[10px] font-semibold" style={{ color: colors.errorText }}>
+                          {absenceCounts[item.id]}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                   <View className="flex-row items-center gap-3 mt-1">
                     <Text className="text-xs" style={{ color: colors.textMuted }}>
                       {t("students.grade")}: {item.grade_level}

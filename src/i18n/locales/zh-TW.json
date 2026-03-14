@@ -124,6 +124,18 @@
     "transcribing": "轉錄中…",
     "micPermissionDenied": "麥克風權限被拒絕，請至設定中開啟。"
   },
+  "emergency": {
+    "callTitle": "緊急通話",
+    "connecting": "連線中...",
+    "connected": "已連線",
+    "ended": "通話結束",
+    "unknownCaller": "未知來電者",
+    "studentLabel": "學生",
+    "joinCall": "加入緊急通話",
+    "joiningCall": "連線中...",
+    "joinError": "無法加入緊急通話，請再試一次。",
+    "voipNotice": "音訊功能需要原生版本（EAS）"
+  },
   "messageType": {
     "attendance": "出勤",
     "payment": "繳費",

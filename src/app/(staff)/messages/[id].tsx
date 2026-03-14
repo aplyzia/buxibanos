@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronDown,
   ChevronUp,
+  Phone,
 } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/stores/auth-store";
@@ -45,6 +46,7 @@ export default function MessageDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [showAiInsights, setShowAiInsights] = useState(false);
+  const [isJoiningCall, setIsJoiningCall] = useState(false);
 
   const dateLocale = i18n.language === "zh-TW" ? "zh-TW" : "en-US";
 
@@ -184,6 +186,39 @@ export default function MessageDetailScreen() {
     setIsSending(false);
   };
 
+  const handleJoinEmergencyCall = async () => {
+    if (!organizationId || !rootMessage) return;
+    setIsJoiningCall(true);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "create-emergency-room",
+        {
+          body: {
+            message_id: rootMessage.id,
+            organization_id: organizationId,
+            caller_name: rootMessage.sender_name,
+            student_name: rootMessage.primary_student ?? undefined,
+          },
+        }
+      );
+      if (error) throw error;
+      router.push({
+        pathname: "/(staff)/emergency-call" as any,
+        params: {
+          roomName: data.room_name,
+          token: data.token,
+          callerName: rootMessage.sender_name,
+          studentName: rootMessage.primary_student ?? "",
+        },
+      });
+    } catch (err) {
+      console.error("join emergency call error:", err);
+      setError(t("emergency.joinError"));
+    } finally {
+      setIsJoiningCall(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <LinearGradient
@@ -289,6 +324,22 @@ export default function MessageDetailScreen() {
               {t(`priority.${rootMessage.priority}`)}
             </Text>
           </View>
+
+          {/* Emergency call button — only for emergency messages */}
+          {rootMessage.message_type === "emergency" && (
+            <Pressable
+              onPress={handleJoinEmergencyCall}
+              disabled={isJoiningCall}
+              className="ml-2 w-10 h-10 items-center justify-center rounded-full active:opacity-70"
+              style={{ backgroundColor: "rgba(239,68,68,0.18)", borderWidth: 1, borderColor: "rgba(239,68,68,0.4)" }}
+            >
+              {isJoiningCall ? (
+                <ActivityIndicator size="small" color="#ef4444" />
+              ) : (
+                <Phone size={18} color="#ef4444" />
+              )}
+            </Pressable>
+          )}
         </View>
 
         {/* AI Insights */}

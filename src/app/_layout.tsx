@@ -43,7 +43,18 @@ export default function RootLayout() {
       const data = response.notification.request.content.data;
       if (!role) return;
 
-      if (data?.channelId) {
+      if (data?.voipRoomName && role !== "parent") {
+        // Emergency call push — navigate directly to in-call screen
+        router.push({
+          pathname: "/(staff)/emergency-call" as any,
+          params: {
+            roomName: data.voipRoomName as string,
+            token: data.voipToken as string,
+            callerName: (data.callerName as string) ?? "",
+            studentName: (data.studentName as string) ?? "",
+          },
+        });
+      } else if (data?.channelId) {
         const routeGroup =
           role === "teacher"
             ? "(teacher)"

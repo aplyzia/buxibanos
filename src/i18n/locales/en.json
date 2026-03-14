@@ -124,6 +124,18 @@
     "transcribing": "Transcribing...",
     "micPermissionDenied": "Microphone access denied. Please enable it in Settings."
   },
+  "emergency": {
+    "callTitle": "Emergency Call",
+    "connecting": "Connecting...",
+    "connected": "Connected",
+    "ended": "Call Ended",
+    "unknownCaller": "Unknown Caller",
+    "studentLabel": "Student",
+    "joinCall": "Join Emergency Call",
+    "joiningCall": "Connecting...",
+    "joinError": "Failed to join emergency call. Please try again.",
+    "voipNotice": "Audio requires native build (EAS)"
+  },
   "messageType": {
     "attendance": "Attendance",
     "payment": "Payment",

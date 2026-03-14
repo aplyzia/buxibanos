@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { chromium } from "playwright";
-import type { Page, ConsoleMessage } from "playwright";
+import type { Page, BrowserContext, ConsoleMessage } from "playwright";
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -25,10 +25,17 @@ function screenshotPath(name: string) {
   return path.join(OUT_DIR, `${name}.png`);
 }
 
-async function snap(page: Page, name: string, waitMs = 1000) {
+async function snap(page: Page, context: BrowserContext, name: string, waitMs = 1000) {
   await page.waitForTimeout(waitMs);
   const file = screenshotPath(name);
-  await page.screenshot({ type: "png", path: file });
+  try {
+    await page.screenshot({ type: "png", path: file, timeout: 10_000 });
+  } catch {
+    // Fallback: use CDP to bypass Playwright's font-waiting
+    const cdp = await context.newCDPSession(page);
+    const result = await cdp.send("Page.captureScreenshot", { format: "png" });
+    fs.writeFileSync(file, Buffer.from(result.data, "base64"));
+  }
   return file;
 }
 
@@ -55,8 +62,10 @@ async function main() {
   page.on("pageerror", (err) => pageErrors.push(err.message));
 
   // Navigate to the app
-  await page.goto(BASE, { waitUntil: "networkidle", timeout: 60_000 });
-  await page.waitForTimeout(2000);
+  await page.goto(BASE, { waitUntil: "commit", timeout: 60_000 });
+  // Wait for JS bundle to load and render
+  await page.waitForLoadState("load", { timeout: 60_000 }).catch(() => {});
+  await page.waitForTimeout(8000);
 
   // ── Login ──
   if (!noLogin) {
@@ -79,13 +88,13 @@ async function main() {
       await page.waitForTimeout(2000);
     } else {
       const targetUrl = route.startsWith("http") ? route : `${BASE}${route}`;
-      await page.goto(targetUrl, { waitUntil: "networkidle", timeout: 30_000 });
-      await page.waitForTimeout(2000);
+      await page.goto(targetUrl, { waitUntil: "commit", timeout: 30_000 });
+      await page.waitForTimeout(4000);
     }
   }
 
   // ── Final screenshot ──
-  const finalFile = await snap(page, "final", fullPage ? 500 : 0);
+  const finalFile = await snap(page, context, "final", fullPage ? 500 : 0);
 
   // ── Health checks ──
   const title = await page.title();

@@ -32,7 +32,7 @@ export default function ParentMessagesScreen() {
       .from("messages")
       .select("*")
       .eq("organization_id", organizationId)
-      .or(`sender_user_id.eq.${session.user.id}`)
+      .eq("sender_user_id", session.user.id)
       .order("created_at", { ascending: false })
       .limit(100);
 

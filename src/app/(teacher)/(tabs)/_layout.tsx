@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Tabs } from "expo-router";
 import { View, Platform } from "react-native";
-import { MessageSquare, CheckSquare } from "lucide-react-native";
+import { MessageSquare, CheckSquare, CalendarCheck } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
 import { useChannelsStore } from "@/stores/channels-store";
@@ -80,6 +80,15 @@ export default function TeacherTabsLayout() {
             <CheckSquare color={color} size={size} />
           ),
           tabBarBadge: pendingCount > 0 ? pendingCount : undefined,
+        }}
+      />
+      <Tabs.Screen
+        name="attendance"
+        options={{
+          title: t("tabs.attendance"),
+          tabBarIcon: ({ color, size }) => (
+            <CalendarCheck color={color} size={size} />
+          ),
         }}
       />
     </Tabs>

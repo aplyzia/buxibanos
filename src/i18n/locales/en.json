@@ -198,7 +198,8 @@
     "saveAll": "Save All",
     "saveError": "Failed to save. Please try again.",
     "saved": "Attendance saved",
-    "autoDetected": "AI Detected"
+    "autoDetected": "AI Detected",
+    "noStudentsAssigned": "No students assigned to you yet"
   },
   "fees": {
     "title": "Fees",
@@ -461,6 +462,7 @@
     "announcements": "Notices",
     "schedule": "Schedule",
     "fees": "Fees",
-    "documents": "Docs"
+    "documents": "Docs",
+    "attendance": "Attendance"
   }
 }

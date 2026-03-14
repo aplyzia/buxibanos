@@ -198,7 +198,8 @@
     "saveAll": "儲存全部",
     "saveError": "儲存失敗，請重試",
     "saved": "出勤已儲存",
-    "autoDetected": "AI 偵測"
+    "autoDetected": "AI 偵測",
+    "noStudentsAssigned": "尚未有學生指派給您"
   },
   "fees": {
     "title": "費用總覽",
@@ -461,6 +462,7 @@
     "announcements": "公告",
     "schedule": "課表",
     "fees": "費用",
-    "documents": "文件"
+    "documents": "文件",
+    "attendance": "出勤"
   }
 }

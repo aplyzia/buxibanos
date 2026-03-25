@@ -1,10 +1,11 @@
 /**
  * AI-powered attendance detection from parent messages.
  *
- * V1: Uses Claude API (Haiku) for smart detection of absence/tardiness
- *     from Traditional Chinese parent messages.
+ * V1: Uses Claude API (Haiku) via backend ai-proxy edge function.
  * Fallback: Keyword-based pattern matching if API is unavailable.
  */
+
+import { supabase } from "@/lib/supabase";
 
 export interface DetectionResult {
   detected: boolean;
@@ -21,78 +22,39 @@ const NO_MATCH: DetectionResult = {
 };
 
 /**
- * Main entry point: tries Claude API first, falls back to keyword matching.
+ * Main entry point: tries AI proxy first, falls back to keyword matching.
  */
 export async function detectAttendance(
   messageContent: string
 ): Promise<DetectionResult> {
-  const apiKey = process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY;
-
-  if (apiKey) {
-    try {
-      return await detectWithClaude(messageContent, apiKey);
-    } catch (err) {
-      console.warn("Claude API detection failed, using keyword fallback:", err);
-    }
+  try {
+    return await detectWithProxy(messageContent);
+  } catch (err) {
+    console.warn("AI proxy detection failed, using keyword fallback:", err);
   }
 
   return detectWithKeywords(messageContent);
 }
 
 /**
- * Claude API detection — uses Haiku for fast, cheap analysis.
+ * AI detection via backend proxy (keeps API key server-side).
  */
-async function detectWithClaude(
-  content: string,
-  apiKey: string
-): Promise<DetectionResult> {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 200,
-      messages: [
-        {
-          role: "user",
-          content: `You are an attendance detection system for a Taiwan cram school (buxiban/補習班). Analyze the following parent message and determine if it indicates a student will be ABSENT or TARDY today.
-
-Message: "${content}"
-
-Respond ONLY with valid JSON in this exact format:
-{"detected": true/false, "status": "absent" or "tardy" or null, "confidence": "high" or "medium" or "low", "reasoning": "brief explanation in English"}
-
-Rules:
-- "absent" = student won't come at all (請假, 不能來, 缺席, illness, etc.)
-- "tardy" = student will be late (遲到, 會晚到, 來不及, etc.)
-- Only detect if the message is about TODAY's attendance
-- Messages asking about past absences or general questions are NOT attendance notifications
-- Be conservative: if unsure, set detected=false`,
-        },
-      ],
-    }),
+async function detectWithProxy(content: string): Promise<DetectionResult> {
+  const { data, error } = await supabase.functions.invoke("ai-proxy", {
+    body: { action: "detect_attendance", content },
   });
 
-  if (!response.ok) {
-    throw new Error(`Claude API error: ${response.status}`);
+  if (error || data?.error) {
+    throw new Error(data?.error ?? error?.message ?? "AI proxy failed");
   }
 
-  const data = await response.json();
-  const text = data.content?.[0]?.text ?? "";
-
-  // Extract JSON from response
+  const text: string = data.result ?? "";
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
-    throw new Error("No JSON in Claude response");
+    throw new Error("No JSON in AI response");
   }
 
-  const result = JSON.parse(jsonMatch[0]) as DetectionResult;
-  return result;
+  return JSON.parse(jsonMatch[0]) as DetectionResult;
 }
 
 /**

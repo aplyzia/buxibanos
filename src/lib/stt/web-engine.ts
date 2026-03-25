@@ -4,6 +4,12 @@
  * Uses Web Audio API (AudioContext + ScriptProcessorNode) to capture raw PCM
  * and streams it to Soniox via WebSocket for live transcription.
  *
+ * NOTE: This module still uses EXPO_PUBLIC_SONIOX_API_KEY directly because
+ * real-time WebSocket streaming cannot be proxied through Supabase edge
+ * functions (2-minute timeout, no persistent connections). The batch API
+ * (soniox-batch.ts) has been moved to the backend proxy. Consider a
+ * dedicated WebSocket relay server for production.
+ *
  * Bug fix: Uses browser's default sample rate instead of forcing 16kHz,
  * which silently fails on many systems.
  */

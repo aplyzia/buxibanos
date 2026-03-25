@@ -148,7 +148,7 @@ async function sendPushNotifications(
 
 Deno.serve(async (req) => {
   const corsH = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": Deno.env.get("CORS_ALLOWED_ORIGIN") ?? "*",
     "Access-Control-Allow-Headers": "authorization, content-type",
   };
 
@@ -347,7 +347,7 @@ Deno.serve(async (req) => {
       {
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Origin": Deno.env.get("CORS_ALLOWED_ORIGIN") ?? "*",
         },
       }
     );

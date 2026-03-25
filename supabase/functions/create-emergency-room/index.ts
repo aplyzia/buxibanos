@@ -86,7 +86,7 @@ async function livekitToken(
 async function createLivekitRoom(roomName: string): Promise<void> {
   if (!LIVEKIT_URL || !LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) return; // stub if not configured
 
-  const adminToken = await livekitToken("admin", "BuxibanOS Admin", {
+  const adminToken = await livekitToken("admin", "EddyFlow Admin", {
     roomCreate: true,
     roomAdmin: true,
   });

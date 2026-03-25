@@ -5,8 +5,8 @@
  * the "Join Emergency Call" button in the message thread or by tapping
  * an incoming emergency push notification.
  *
- * Audio / video requires a native EAS build with @livekit/react-native.
- * The UI is fully functional; only the actual WebRTC track is stubbed.
+ * In native builds: real WebRTC audio via @livekit/react-native.
+ * In Expo Go: fake connection for UI testing.
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -18,9 +18,18 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { PhoneOff, AlertTriangle } from "lucide-react-native";
+import {
+  PhoneOff,
+  AlertTriangle,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
+} from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@/theme";
+import { isLiveKitAvailable } from "@/lib/livekit";
+import { useLiveKitRoom } from "@/hooks/use-livekit-room";
 
 type CallStatus = "connecting" | "connected" | "ended";
 
@@ -45,15 +54,52 @@ export default function EmergencyCallScreen() {
   const [duration, setDuration] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Simulate WebRTC connecting (real audio needs @livekit/react-native + EAS build)
+  const isNative = isLiveKitAvailable();
+  const livekitUrl = process.env.EXPO_PUBLIC_LIVEKIT_URL ?? "";
+
+  // Real LiveKit connection (native builds only)
+  const livekit = useLiveKitRoom({
+    serverUrl: livekitUrl,
+    token: token ?? "",
+    autoConnect: isNative && !!token,
+  });
+
+  // Expo Go fallback — fake connection
   useEffect(() => {
+    if (isNative) return;
     const timeout = setTimeout(() => {
       setStatus("connected");
       timerRef.current = setInterval(() => setDuration((d) => d + 1), 1000);
     }, 1500);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [isNative]);
 
+  // Sync LiveKit status → screen status
+  useEffect(() => {
+    if (!isNative) return;
+    switch (livekit.status) {
+      case "connecting":
+      case "reconnecting":
+        setStatus("connecting");
+        break;
+      case "connected":
+        if (status !== "connected") {
+          setStatus("connected");
+          if (!timerRef.current) {
+            timerRef.current = setInterval(() => setDuration((d) => d + 1), 1000);
+          }
+        }
+        break;
+      case "disconnected":
+      case "error":
+        if (status !== "ended") {
+          setStatus("ended");
+        }
+        break;
+    }
+  }, [livekit.status]);
+
+  // Cleanup timer on status change
   useEffect(() => {
     if (status === "ended" && timerRef.current) {
       clearInterval(timerRef.current);
@@ -61,6 +107,7 @@ export default function EmergencyCallScreen() {
     }
   }, [status]);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -68,6 +115,9 @@ export default function EmergencyCallScreen() {
   }, []);
 
   const handleHangUp = () => {
+    if (isNative) {
+      livekit.disconnect();
+    }
     setStatus("ended");
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -86,9 +136,13 @@ export default function EmergencyCallScreen() {
 
   const statusText =
     status === "connecting"
-      ? t("emergency.connecting")
+      ? livekit.status === "reconnecting"
+        ? t("emergency.reconnecting")
+        : t("emergency.connecting")
       : status === "connected"
       ? formatDuration(duration)
+      : livekit.error
+      ? t("emergency.connectionFailed")
       : t("emergency.ended");
 
   const statusColor =
@@ -171,6 +225,13 @@ export default function EmergencyCallScreen() {
           </Text>
         )}
 
+        {/* Participant count (native only) */}
+        {isNative && livekit.participantCount > 1 && status === "connected" && (
+          <Text className="text-xs mt-1" style={{ color: colors.textTertiary }}>
+            {livekit.participantCount} {t("emergency.participants")}
+          </Text>
+        )}
+
         {/* Room name */}
         <Text
           className="text-xs mt-2"
@@ -181,22 +242,67 @@ export default function EmergencyCallScreen() {
         </Text>
       </View>
 
-      {/* Hang-up button */}
+      {/* Controls */}
       <View className="pb-16 items-center">
         {status !== "ended" && (
-          <Pressable
-            onPress={handleHangUp}
-            className="w-20 h-20 rounded-full items-center justify-center active:opacity-70"
-            style={{ backgroundColor: EMERGENCY_RED }}
-          >
-            <PhoneOff size={32} color="#fff" />
-          </Pressable>
+          <View className="flex-row items-center" style={{ gap: 24 }}>
+            {/* Mute toggle (native only) */}
+            {isNative && (
+              <Pressable
+                onPress={livekit.toggleMute}
+                className="w-16 h-16 rounded-full items-center justify-center active:opacity-70"
+                style={{
+                  backgroundColor: livekit.isMuted
+                    ? "rgba(255,255,255,0.2)"
+                    : "rgba(255,255,255,0.1)",
+                  borderWidth: 1,
+                  borderColor: "rgba(255,255,255,0.2)",
+                }}
+              >
+                {livekit.isMuted ? (
+                  <MicOff size={24} color="#fff" />
+                ) : (
+                  <Mic size={24} color="#fff" />
+                )}
+              </Pressable>
+            )}
+
+            {/* Hang up */}
+            <Pressable
+              onPress={handleHangUp}
+              className="w-20 h-20 rounded-full items-center justify-center active:opacity-70"
+              style={{ backgroundColor: EMERGENCY_RED }}
+            >
+              <PhoneOff size={32} color="#fff" />
+            </Pressable>
+
+            {/* Speaker toggle (native only) */}
+            {isNative && (
+              <Pressable
+                onPress={livekit.toggleSpeaker}
+                className="w-16 h-16 rounded-full items-center justify-center active:opacity-70"
+                style={{
+                  backgroundColor: livekit.isSpeakerOn
+                    ? "rgba(255,255,255,0.2)"
+                    : "rgba(255,255,255,0.1)",
+                  borderWidth: 1,
+                  borderColor: "rgba(255,255,255,0.2)",
+                }}
+              >
+                {livekit.isSpeakerOn ? (
+                  <Volume2 size={24} color="#fff" />
+                ) : (
+                  <VolumeX size={24} color="#fff" />
+                )}
+              </Pressable>
+            )}
+          </View>
         )}
         <Text
           className="text-xs mt-4 text-center"
           style={{ color: colors.textTertiary }}
         >
-          {t("emergency.voipNotice")}
+          {isNative ? roomName : t("emergency.voipNotice")}
         </Text>
       </View>
     </LinearGradient>

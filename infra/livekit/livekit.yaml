@@ -1,0 +1,40 @@
+# EddyFlow — LiveKit Server Configuration
+# Must match LIVEKIT_API_KEY / LIVEKIT_API_SECRET in Supabase Edge Function secrets.
+#
+# Deploy: docker compose up -d
+# Verify: curl -I https://livekit.YOUR-DOMAIN.com
+
+port: 7880
+log_level: info
+
+keys:
+  # Replace with your actual API key and secret
+  # Generate: openssl rand -base64 48
+  EDDY_API_KEY: REPLACE_WITH_64_CHAR_SECRET
+
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 60000
+  use_external_ip: true
+
+room:
+  empty_timeout: 600       # 10 min — matches edge function create-emergency-room
+  max_participants: 20     # matches edge function
+
+turn:
+  enabled: true
+  domain: turn.livekit.YOUR-DOMAIN.com
+  tls_port: 5349
+  udp_port: 3478
+
+redis:
+  address: localhost:6379
+
+# Firewall ports to open:
+# 80/tcp   — ACME / TLS cert issuance (Caddy)
+# 443/tcp  — HTTPS (WebSocket signaling)
+# 3478/udp — TURN UDP relay
+# 5349/tcp — TURN over TLS
+# 7881/tcp — WebRTC TCP fallback
+# 50000-60000/udp — WebRTC media (RTP/RTCP)

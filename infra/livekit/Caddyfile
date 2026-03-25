@@ -1,0 +1,15 @@
+# EddyFlow — Caddy reverse proxy for LiveKit
+# Replace YOUR-DOMAIN.com with your actual domain.
+# Caddy auto-provisions TLS via Let's Encrypt.
+#
+# DNS A records required:
+#   livekit.YOUR-DOMAIN.com      → VPS IP
+#   turn.livekit.YOUR-DOMAIN.com → VPS IP
+
+livekit.YOUR-DOMAIN.com {
+    reverse_proxy localhost:7880
+}
+
+turn.livekit.YOUR-DOMAIN.com {
+    reverse_proxy localhost:5349
+}

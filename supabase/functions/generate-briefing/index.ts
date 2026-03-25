@@ -66,6 +66,22 @@ Deno.serve(async (req) => {
     }
 
     const organizationId = staffRow.organization_id;
+
+    // ── Tier check: briefing requires Standard+ ──
+    const { data: orgRow } = await supabaseAdmin
+      .from("organizations")
+      .select("subscription_tier")
+      .eq("id", organizationId)
+      .single();
+    const tier = orgRow?.subscription_tier ?? "starter";
+    const TIER_ORDER: Record<string, number> = { starter: 0, standard: 1, premium: 2 };
+    if ((TIER_ORDER[tier] ?? 0) < TIER_ORDER["standard"]) {
+      return new Response(
+        JSON.stringify({ error: "AI Briefing requires the Standard plan or higher" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { type = "morning", force = false } = await req.json().catch(() => ({}));
 
     // Determine brief_date

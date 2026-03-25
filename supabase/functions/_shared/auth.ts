@@ -106,6 +106,38 @@ export async function authenticate(
 
 export { hashKey };
 
+/** Subscription tier ordering for gate checks. */
+const TIER_ORDER: Record<string, number> = {
+  starter: 0,
+  standard: 1,
+  premium: 2,
+};
+
+/**
+ * Check if an organization meets the minimum subscription tier.
+ * Returns null if allowed, or a 403 Response if denied.
+ */
+export async function requireTier(
+  supabase: SupabaseClient,
+  organizationId: string,
+  minTier: "starter" | "standard" | "premium"
+): Promise<Response | null> {
+  const { data: org } = await supabase
+    .from("organizations")
+    .select("subscription_tier")
+    .eq("id", organizationId)
+    .single();
+
+  const current = org?.subscription_tier ?? "starter";
+  if ((TIER_ORDER[current] ?? 0) < TIER_ORDER[minTier]) {
+    return json(
+      { error: `This feature requires the ${minTier} plan or higher` },
+      403
+    );
+  }
+  return null;
+}
+
 export async function logApiCall(
   supabase: SupabaseClient,
   params: {

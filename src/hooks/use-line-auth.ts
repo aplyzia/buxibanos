@@ -20,7 +20,9 @@ export function useLineAuth() {
 
     try {
       // Build LINE OAuth 2.1 authorization URL
-      const state = Math.random().toString(36).slice(2, 18);
+      const stateBytes = new Uint8Array(16);
+      crypto.getRandomValues(stateBytes);
+      const state = Array.from(stateBytes, (b) => b.toString(16).padStart(2, "0")).join("");
       const params = new URLSearchParams({
         response_type: "code",
         client_id: LINE_CHANNEL_ID,

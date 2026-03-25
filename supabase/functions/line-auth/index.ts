@@ -16,10 +16,15 @@ Deno.serve(async (req) => {
   );
 
   try {
+    const EXPECTED_REDIRECT_URI = "eddy://auth/callback";
     const { code, redirect_uri, invite_code } = await req.json();
 
     if (!code || !redirect_uri) {
       return json({ error: "code and redirect_uri are required" }, 400);
+    }
+
+    if (redirect_uri !== EXPECTED_REDIRECT_URI) {
+      return json({ error: "Invalid redirect_uri" }, 400);
     }
 
     const LINE_CHANNEL_ID = Deno.env.get("LINE_CHANNEL_ID")!;

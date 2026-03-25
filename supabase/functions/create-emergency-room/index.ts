@@ -147,16 +147,60 @@ async function sendPushNotifications(
 // ── Main handler ──────────────────────────────────────────────────────────────
 
 Deno.serve(async (req) => {
+  const corsH = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, content-type",
+  };
+
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "authorization, content-type",
-      },
-    });
+    return new Response(null, { headers: corsH });
   }
 
   try {
+    // ── Auth: require valid Supabase JWT or service-role key ──
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authorization header required" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsH } }
+      );
+    }
+
+    const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+    // If not service-role, verify the JWT belongs to an active staff member
+    const isServiceRole = authHeader === `Bearer ${SUPABASE_SERVICE_KEY}`;
+    let authedOrgId: string | null = null;
+
+    if (!isServiceRole) {
+      const anonClient = createClient(
+        SUPABASE_URL,
+        Deno.env.get("SUPABASE_ANON_KEY")!
+      );
+      const { data: { user }, error: authErr } = await anonClient.auth.getUser(
+        authHeader.replace("Bearer ", "")
+      );
+      if (authErr || !user) {
+        return new Response(
+          JSON.stringify({ error: "Invalid or expired token" }),
+          { status: 401, headers: { "Content-Type": "application/json", ...corsH } }
+        );
+      }
+      // Look up staff org
+      const { data: staffRow } = await sb
+        .from("staff")
+        .select("organization_id")
+        .eq("supabase_user_id", user.id)
+        .maybeSingle();
+      if (!staffRow) {
+        return new Response(
+          JSON.stringify({ error: "Not authorized — staff only" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsH } }
+        );
+      }
+      authedOrgId = staffRow.organization_id;
+    }
+
     const {
       message_id,
       organization_id,
@@ -174,11 +218,17 @@ Deno.serve(async (req) => {
     if (!message_id || !organization_id) {
       return new Response(
         JSON.stringify({ error: "message_id and organization_id required" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 400, headers: { "Content-Type": "application/json", ...corsH } }
       );
     }
 
-    const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+    // Enforce org match for non-service-role callers
+    if (authedOrgId && authedOrgId !== organization_id) {
+      return new Response(
+        JSON.stringify({ error: "Organization mismatch" }),
+        { status: 403, headers: { "Content-Type": "application/json", ...corsH } }
+      );
+    }
 
     // ── Room name: deterministic so repeated calls don't create new rooms ──
     const roomName = `emergency-${message_id}`;

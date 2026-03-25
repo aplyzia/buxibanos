@@ -9,7 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import { Plus } from "lucide-react-native";
+import { Plus, Settings } from "lucide-react-native";
 import { useAuthStore } from "@/stores/auth-store";
 import { useChannelsStore } from "@/stores/channels-store";
 import { useUnifiedInbox } from "@/hooks/useUnifiedInbox";
@@ -17,8 +17,6 @@ import { ChannelCard } from "@/components/channels/channel-card";
 import ChannelSearchBar from "@/components/channels/channel-search-bar";
 import { PriorityFilterBar } from "@/components/messages/priority-filter";
 import { NewConversationSheet } from "@/components/inbox/new-conversation-sheet";
-import { LanguageToggle } from "@/components/common/language-toggle";
-import { ThemeToggle } from "@/components/common/theme-toggle";
 import GlassBackground from "@/components/common/glass-background";
 import { useTheme } from "@/theme";
 import type { UnifiedInboxItem } from "@/types/unified-inbox";
@@ -29,7 +27,6 @@ export default function TeacherUnifiedInboxScreen() {
   const { colors } = useTheme();
   const profile = useAuthStore((s) => s.profile);
   const organizationId = useAuthStore((s) => s.organizationId);
-  const signOut = useAuthStore((s) => s.signOut);
 
   const channels = useChannelsStore((s) => s.channels);
   const isLoading = useChannelsStore((s) => s.isLoading);
@@ -96,26 +93,13 @@ export default function TeacherUnifiedInboxScreen() {
           <Text className="text-sm" style={{ color: colors.textTertiary }}>
             {t(`dashboard.greeting.${greetingKey}`)}
           </Text>
-          <View className="flex-row items-center gap-2">
-            <ThemeToggle />
-            <LanguageToggle />
-            <Pressable
-              onPress={signOut}
-              className="px-3 py-1.5 rounded-full active:opacity-70"
-              style={{
-                backgroundColor: colors.surfaceBg,
-                borderWidth: 1,
-                borderColor: colors.surfaceBorder,
-              }}
-            >
-              <Text
-                className="text-xs font-medium"
-                style={{ color: colors.textSecondary }}
-              >
-                {t("auth.signOut")}
-              </Text>
-            </Pressable>
-          </View>
+          <Pressable
+            onPress={() => router.push("/(teacher)/settings" as any)}
+            className="w-10 h-10 items-center justify-center rounded-full active:opacity-70"
+            style={{ backgroundColor: colors.surfaceBg }}
+          >
+            <Settings size={20} color={colors.textSecondary} />
+          </Pressable>
         </View>
         <Text
           className="text-2xl font-bold"

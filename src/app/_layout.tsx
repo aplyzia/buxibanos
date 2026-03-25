@@ -7,6 +7,7 @@ import {
   registerForPushNotifications,
   addNotificationResponseListener,
 } from "@/lib/notifications";
+import { initLiveKit } from "@/lib/livekit";
 import "@/i18n";
 import "../../global.css";
 
@@ -22,6 +23,7 @@ export default function RootLayout() {
   const pushRegistered = useRef(false);
 
   useEffect(() => {
+    initLiveKit();
     initialize();
   }, []);
 

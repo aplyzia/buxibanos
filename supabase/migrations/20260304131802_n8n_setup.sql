@@ -1,4 +1,4 @@
--- BuxibanOS n8n Setup
+-- EddyFlow n8n Setup
 -- Run this in Supabase SQL Editor before activating any workflows
 
 -- Table for n8n to log workflow failures without blocking main flows

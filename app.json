@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "BuxibanOS",
-    "slug": "buxibanos",
+    "name": "EddyFlow",
+    "slug": "eddyflow",
     "version": "1.0.0",
-    "scheme": "buxibanos",
+    "scheme": "eddy",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,14 +15,14 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.buxibanos.app"
+      "bundleIdentifier": "com.eddyflow.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1A3A5C"
       },
-      "package": "com.buxibanos.app"
+      "package": "com.eddyflow.app"
     },
     "plugins": [
       "expo-router",
@@ -33,14 +33,14 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow BuxibanOS to access your photos for sending images in messages.",
-          "cameraPermission": "Allow BuxibanOS to use the camera for sending photos in messages."
+          "photosPermission": "Allow EddyFlow to access your photos for sending images in messages.",
+          "cameraPermission": "Allow EddyFlow to use the camera for sending photos in messages."
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow BuxibanOS to use the microphone for voice messages and speech-to-text."
+          "microphonePermission": "Allow EddyFlow to use the microphone for voice messages and speech-to-text."
         }
       ],
       [
@@ -51,7 +51,9 @@
         }
       ],
       "expo-document-picker",
-      "expo-web-browser"
+      "expo-web-browser",
+      "@livekit/react-native-expo-plugin",
+      "@config-plugins/react-native-webrtc"
     ],
     "experiments": {
       "typedRoutes": true

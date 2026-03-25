@@ -179,7 +179,7 @@ Deno.serve(async (req) => {
 
     <div class="divider"></div>
     <div class="footer">
-      ${schoolName} &nbsp;·&nbsp; BuxibanOS<br>
+      ${schoolName} &nbsp;·&nbsp; EddyFlow<br>
       ${fee.notes ? `Notes: ${fee.notes}` : "Thank you / 感謝您"}
     </div>
   </div>

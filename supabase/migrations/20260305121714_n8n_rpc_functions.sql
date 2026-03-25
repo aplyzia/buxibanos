@@ -1,4 +1,4 @@
--- BuxibanOS n8n RPC Functions (WF2, WF3, WF4, WF5, WF6)
+-- EddyFlow n8n RPC Functions (WF2, WF3, WF4, WF5, WF6)
 -- All functions are SECURITY DEFINER — called by n8n with service role key
 
 -- ─────────────────────────────────────────────────────────────────

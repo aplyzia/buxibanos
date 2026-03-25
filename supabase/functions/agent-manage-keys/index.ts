@@ -54,13 +54,13 @@ Deno.serve(async (req) => {
       const label = body.label || "default";
       const rateLimitPerMinute = body.rate_limit_per_minute || 60;
 
-      // Generate key: eddy_ + 32 random hex chars
+      // Generate key: ef_ + 32 random hex chars
       const randomBytes = new Uint8Array(16);
       crypto.getRandomValues(randomBytes);
       const hex = Array.from(randomBytes)
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
-      const rawKey = `eddy_${hex}`;
+      const rawKey = `ef_${hex}`;
       const keyPrefix = rawKey.substring(0, 12);
       const keyHash = await hashKey(rawKey);
 

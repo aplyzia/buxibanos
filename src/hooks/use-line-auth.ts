@@ -3,7 +3,7 @@ import * as WebBrowser from "expo-web-browser";
 import { supabase } from "@/lib/supabase";
 
 const LINE_CHANNEL_ID = process.env.EXPO_PUBLIC_LINE_CHANNEL_ID ?? "";
-const REDIRECT_URI = "buxibanos://auth/callback";
+const REDIRECT_URI = "eddy://auth/callback";
 
 export function useLineAuth() {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +32,7 @@ export function useLineAuth() {
       const authUrl = `https://access.line.me/oauth2/v2.1/authorize?${params.toString()}`;
 
       // Open LINE Login in a system browser (ASWebAuthenticationSession on iOS,
-      // Chrome Custom Tabs on Android). Waits for the redirect back to buxibanos://
+      // Chrome Custom Tabs on Android). Waits for the redirect back to eddy://
       const result = await WebBrowser.openAuthSessionAsync(authUrl, REDIRECT_URI);
 
       if (result.type === "cancel" || result.type === "dismiss") {

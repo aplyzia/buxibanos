@@ -71,7 +71,7 @@ export default function SignInScreen() {
           <Text className="text-2xl font-bold" style={{ color: colors.textPrimary }}>
             {SCHOOL_NAME}
           </Text>
-          <Text className="text-sm mt-1" style={{ color: colors.textTertiary }}>BuxibanOS</Text>
+          <Text className="text-sm mt-1" style={{ color: colors.textTertiary }}>EddyFlow</Text>
         </View>
 
         {/* Glass card form */}

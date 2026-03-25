@@ -2,10 +2,9 @@ import { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, Pressable, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { Settings } from "lucide-react-native";
 import { useAuthStore } from "@/stores/auth-store";
 import { supabase } from "@/lib/supabase";
-import { LanguageToggle } from "@/components/common/language-toggle";
-import { ThemeToggle } from "@/components/common/theme-toggle";
 import { Message } from "@/types/database";
 import GlassBackground from "@/components/common/glass-background";
 import GlassCard from "@/components/common/glass-card";
@@ -16,7 +15,6 @@ export default function ParentMessagesScreen() {
   const router = useRouter();
   const session = useAuthStore((s) => s.session);
   const organizationId = useAuthStore((s) => s.organizationId);
-  const signOut = useAuthStore((s) => s.signOut);
   const { colors } = useTheme();
 
   const [threads, setThreads] = useState<Message[]>([]);
@@ -70,19 +68,13 @@ export default function ParentMessagesScreen() {
           <Text className="text-2xl font-bold" style={{ color: colors.textPrimary }}>
             {t("messages.title")}
           </Text>
-          <View className="flex-row items-center gap-2">
-            <ThemeToggle />
-            <LanguageToggle />
-            <Pressable
-              onPress={signOut}
-              className="px-3 py-1.5 rounded-full active:opacity-70"
-              style={{ backgroundColor: colors.surfaceBorder, borderWidth: 1, borderColor: colors.surfaceBorder }}
-            >
-              <Text className="text-xs font-medium" style={{ color: colors.textSecondary }}>
-                {t("auth.signOut")}
-              </Text>
-            </Pressable>
-          </View>
+          <Pressable
+            onPress={() => router.push("/(parent)/settings" as any)}
+            className="w-10 h-10 items-center justify-center rounded-full active:opacity-70"
+            style={{ backgroundColor: colors.surfaceBg }}
+          >
+            <Settings size={20} color={colors.textSecondary} />
+          </Pressable>
         </View>
       </View>
 

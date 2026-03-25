@@ -1,6 +1,8 @@
 node_modules/
 .env
 .env.local
+.expo/
+.google-token.json
 
 # Build output
 dist/

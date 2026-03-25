@@ -73,6 +73,14 @@ export async function registerForPushNotifications(
         lightColor: "#FF6B6B",
         sound: "default",
       });
+      await Notifications.setNotificationChannelAsync("emergency", {
+        name: "Emergency Calls",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 500, 200, 500, 200, 500],
+        lightColor: "#FF0000",
+        sound: "default",
+        bypassDnd: true,
+      });
     }
 
     return token;

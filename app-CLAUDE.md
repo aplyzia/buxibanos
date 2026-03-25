@@ -1,7 +1,7 @@
-# BuxibanOS — React Native App
+# EddyFlow — React Native App
 
 ## What This Is
-BuxibanOS is a two-app SaaS platform for Taiwan cram schools (buxibans). It replaces Line group chats and manual admin with a unified AI-powered system. This repo is the React Native mobile app.
+EddyFlow is a two-app SaaS platform for Taiwan cram schools (buxibans). It replaces Line group chats and manual admin with a unified AI-powered system. This repo is the React Native mobile app.
 
 **Two apps, one codebase:**
 - **Staff App** — Directors, teachers, admins. AI-powered message triage, 3-tile priority dashboard, voice-to-send.
@@ -87,7 +87,7 @@ The home screen is a **3-tile priority dashboard** — Urgent / Medium / Low. Th
 - After auth, role determines routing: `parent` → `/(parent)/(tabs)`, all others → `/(staff)/(tabs)`
 
 ### Messaging Architecture
-BuxibanOS has its **own native messaging system**. It does NOT use Line's messaging API. Messages are stored in Supabase, delivered via Supabase Realtime WebSocket, push notifications via Expo Push API. Line Login is used only for parent identity verification (OAuth2).
+EddyFlow has its **own native messaging system**. It does NOT use Line's messaging API. Messages are stored in Supabase, delivered via Supabase Realtime WebSocket, push notifications via Expo Push API. Line Login is used only for parent identity verification (OAuth2).
 
 ### AI Principle
 The AI in V1 **analyzes, organizes, prioritizes, and assists — but never sends a message autonomously**. Every outgoing message is written or approved by a human staff member.
@@ -175,4 +175,4 @@ EXPO_PUBLIC_APP_ENV=development
 - Push notifications via Expo Push API
 - Daily summary report (scheduled 6:00 PM)
 
-n8n connects to the same Supabase instance using the service role key. Workflows live in the separate `buxibanos-n8n` project.
+n8n connects to the same Supabase instance using the service role key. Workflows live in the separate `eddyflow-n8n` project.

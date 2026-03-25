@@ -1,5 +1,5 @@
 {
-  "name": "buxibanos",
+  "name": "eddyflow",
   "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -10,11 +10,18 @@
     "web": "expo start --web",
     "lint": "eslint .",
     "ts:check": "tsc --noEmit",
-    "check-ui": "node --experimental-strip-types scripts/check-ui.ts"
+    "check-ui": "node --experimental-strip-types scripts/check-ui.ts",
+    "onboard-school": "node --experimental-strip-types scripts/onboard-school.ts",
+    "import-school": "node --experimental-strip-types scripts/import-school.ts",
+    "scan-docs": "node --experimental-strip-types scripts/scan-school-docs.ts"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.63",
+    "@config-plugins/react-native-webrtc": "^13.0.0",
     "@expo/metro-runtime": "~6.1.2",
+    "@livekit/react-native": "^2.9.6",
+    "@livekit/react-native-expo-plugin": "^1.0.1",
+    "@livekit/react-native-webrtc": "^137.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@soniox/client": "^1.0.2",
     "@supabase/supabase-js": "^2.49.1",
@@ -38,6 +45,7 @@
     "expo-status-bar": "~3.0.9",
     "expo-web-browser": "~15.0.10",
     "i18next": "^24.2.2",
+    "livekit-client": "^2.17.3",
     "lucide-react-native": "^0.575.0",
     "nativewind": "4.2.0",
     "react": "19.1.0",
@@ -55,10 +63,16 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@babel/core": "^7.25.2",
     "@types/react": "~19.1.10",
+    "googleapis": "^171.4.0",
+    "mammoth": "^1.12.0",
+    "open": "^11.0.0",
+    "pdf-parse": "^2.4.5",
     "playwright": "^1.58.2",
     "tailwindcss": "3.4.17",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "xlsx": "^0.18.5"
   }
 }

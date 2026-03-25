@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
     }
 
     // ── Step 5: Derive deterministic Supabase credentials from LINE ID ───
-    const lineEmail = `line_${lineUserId}@line.buxibanos.internal`;
+    const lineEmail = `line_${lineUserId}@line.eddy.internal`;
     const linePassword = await derivePassword(LINE_CHANNEL_SECRET, lineUserId);
 
     // ── Step 6: Create Supabase auth user if not yet registered ──────────

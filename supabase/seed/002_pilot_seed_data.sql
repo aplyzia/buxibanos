@@ -1,4 +1,4 @@
--- BuxibanOS Pilot Seed Data
+-- EddyFlow Pilot Seed Data
 -- Auth users already created with UUIDs:
 --   director@xiong-buxiban.com => 01cc6632-c8ef-414c-8a9b-9ea72a7d3811
 --   wang@xiong-buxiban.com     => 11df0d93-eafd-4ec8-975b-d29e5ce8f1fe
@@ -76,7 +76,7 @@ INSERT INTO parents (id, organization_id, full_name, email, phone, student_ids, 
   ('40000000-0000-0000-0000-000000000011', '00000000-0000-0000-0000-000000000001', '魏國華', 'zheng.guohua@gmail.com',   '0912-345-011',
     ARRAY['30000000-0000-0000-0000-000000000011'::uuid, '30000000-0000-0000-0000-000000000012'::uuid], 'all', 'zh-TW', 'INV-011-ZHENG');
 
--- MESSAGES (realistic buxiban scenarios)
+-- MESSAGES (realistic scenarios)
 INSERT INTO messages (id, organization_id, sender_name, sender_type, receiver_name, receiver_type, primary_student, message_type, priority, action_required, summary, original_content, confidence, staff_responded, processed_at, additional_students, media_urls) VALUES
   ('50000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001',
     '陳志明', 'parent', '王老師', 'teacher', '陳柏安',

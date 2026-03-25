@@ -134,7 +134,10 @@
     "joinCall": "加入緊急通話",
     "joiningCall": "連線中...",
     "joinError": "無法加入緊急通話，請再試一次。",
-    "voipNotice": "音訊功能需要原生版本（EAS）"
+    "voipNotice": "音訊功能需要原生版本（EAS）",
+    "reconnecting": "重新連線中...",
+    "participants": "通話中",
+    "connectionFailed": "連線失敗"
   },
   "messageType": {
     "attendance": "出勤",

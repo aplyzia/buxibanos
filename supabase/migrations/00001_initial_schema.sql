@@ -1,4 +1,4 @@
--- BuxibanOS Initial Schema
+-- EddyFlow Initial Schema
 -- Based on Technical Specification v1 (Feb 2026)
 -- Run: supabase db push
 

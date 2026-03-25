@@ -141,7 +141,7 @@ export default function DashboardScreen() {
             </Pressable>
           </View>
           <Text className="text-2xl font-bold mt-0.5" style={{ color: colors.textPrimary }}>
-            {staffName || "BuxibanOS"}
+            {staffName || "EddyFlow"}
           </Text>
           <Text className="text-sm mt-1" style={{ color: colors.textMuted }}>
             {new Date().toLocaleDateString(dateLocale, {

@@ -107,7 +107,7 @@ export default function ParentMessageThreadScreen() {
         staff_responded: false,
         processed_at: new Date().toISOString(),
         thread_id: threadId,
-      })
+      } as any)
       .select()
       .single();
 

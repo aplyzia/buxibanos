@@ -15,6 +15,7 @@ export interface Database {
           google_drive_folder_id: string | null;
           notification_config: Json;
           subscription_tier: "starter" | "standard" | "premium";
+          school_policies: Json;
           is_active: boolean;
           created_at: string;
           updated_at: string;
@@ -23,7 +24,8 @@ export interface Database {
           Database["public"]["Tables"]["organizations"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["organizations"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["organizations"]["Row"]>;
+        Relationships: [];
       };
       students: {
         Row: {
@@ -31,6 +33,7 @@ export interface Database {
           organization_id: string;
           full_name: string;
           display_name: string | null;
+          nicknames: string[];
           grade_level: string;
           class_ids: string[];
           assigned_teacher_id: string;
@@ -38,6 +41,8 @@ export interface Database {
           enrollment_date: string;
           marketing_consent: boolean;
           grade_records: Json;
+          special_needs: string | null;
+          communication_notes: string | null;
           notes: string | null;
           created_at: string;
           updated_at: string;
@@ -46,7 +51,8 @@ export interface Database {
           Database["public"]["Tables"]["students"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["students"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["students"]["Row"]>;
+        Relationships: [];
       };
       parents: {
         Row: {
@@ -71,7 +77,8 @@ export interface Database {
           Database["public"]["Tables"]["parents"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["parents"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["parents"]["Row"]>;
+        Relationships: [];
       };
       staff: {
         Row: {
@@ -91,7 +98,8 @@ export interface Database {
           Database["public"]["Tables"]["staff"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["staff"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["staff"]["Row"]>;
+        Relationships: [];
       };
       messages: {
         Row: {
@@ -124,7 +132,8 @@ export interface Database {
           Database["public"]["Tables"]["messages"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["messages"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["messages"]["Row"]>;
+        Relationships: [];
       };
       documents: {
         Row: {
@@ -148,7 +157,8 @@ export interface Database {
           Database["public"]["Tables"]["documents"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["documents"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["documents"]["Row"]>;
+        Relationships: [];
       };
       fee_records: {
         Row: {
@@ -170,7 +180,8 @@ export interface Database {
           Database["public"]["Tables"]["fee_records"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["fee_records"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["fee_records"]["Row"]>;
+        Relationships: [];
       };
       attendance: {
         Row: {
@@ -192,7 +203,8 @@ export interface Database {
           Database["public"]["Tables"]["attendance"]["Row"],
           "id" | "created_at" | "updated_at" | "source"
         > & { source?: "manual" | "auto_message" };
-        Update: Partial<Database["public"]["Tables"]["attendance"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["attendance"]["Row"]>;
+        Relationships: [];
       };
       classes: {
         Row: {
@@ -211,7 +223,8 @@ export interface Database {
           Database["public"]["Tables"]["classes"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["classes"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["classes"]["Row"]>;
+        Relationships: [];
       };
       tasks: {
         Row: {
@@ -234,7 +247,8 @@ export interface Database {
           Database["public"]["Tables"]["tasks"]["Row"],
           "id" | "created_at" | "updated_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["tasks"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["tasks"]["Row"]>;
+        Relationships: [];
       };
       announcements: {
         Row: {
@@ -277,7 +291,8 @@ export interface Database {
           expires_at?: string | null;
           priority?: "normal" | "urgent";
         };
-        Update: Partial<Database["public"]["Tables"]["announcements"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["announcements"]["Row"]>;
+        Relationships: [];
       };
       announcement_recipients: {
         Row: {
@@ -312,7 +327,8 @@ export interface Database {
           responded_at?: string | null;
           dismissed_at?: string | null;
         };
-        Update: Partial<Database["public"]["Tables"]["announcement_recipients"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["announcement_recipients"]["Row"]>;
+        Relationships: [];
       };
       channels: {
         Row: {
@@ -329,7 +345,8 @@ export interface Database {
           Database["public"]["Tables"]["channels"]["Row"],
           "id" | "created_at" | "updated_at" | "priority"
         > & { priority?: "high" | "medium" | "low" };
-        Update: Partial<Database["public"]["Tables"]["channels"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["channels"]["Row"]>;
+        Relationships: [];
       };
       channel_members: {
         Row: {
@@ -343,7 +360,8 @@ export interface Database {
           Database["public"]["Tables"]["channel_members"]["Row"],
           "id" | "joined_at" | "last_read_at"
         >;
-        Update: Partial<Database["public"]["Tables"]["channel_members"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["channel_members"]["Row"]>;
+        Relationships: [];
       };
       channel_messages: {
         Row: {
@@ -360,7 +378,8 @@ export interface Database {
           Database["public"]["Tables"]["channel_messages"]["Row"],
           "id" | "created_at" | "reply_to_id" | "deleted_at"
         > & { reply_to_id?: string | null };
-        Update: Partial<Database["public"]["Tables"]["channel_messages"]["Insert"]> & { deleted_at?: string | null };
+        Update: Partial<Database["public"]["Tables"]["channel_messages"]["Row"]> & { deleted_at?: string | null };
+        Relationships: [];
       };
       channel_tasks: {
         Row: {
@@ -380,6 +399,7 @@ export interface Database {
           "id" | "created_at" | "is_completed" | "is_pinned"
         >;
         Update: Partial<Database["public"]["Tables"]["channel_tasks"]["Row"]>;
+        Relationships: [];
       };
       channel_events: {
         Row: {
@@ -396,6 +416,141 @@ export interface Database {
           "id" | "created_at" | "is_pinned"
         >;
         Update: Partial<Database["public"]["Tables"]["channel_events"]["Row"]>;
+        Relationships: [];
+      };
+      briefings: {
+        Row: {
+          id: string;
+          organization_id: string;
+          type: "morning" | "weekly";
+          brief_date: string;
+          content: Json;
+          generated_at: string;
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["briefings"]["Row"],
+          "id" | "created_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["briefings"]["Row"]>;
+        Relationships: [];
+      };
+      photo_media: {
+        Row: {
+          id: string;
+          organization_id: string;
+          event_name: string | null;
+          file_url: string;
+          uploaded_by: string;
+          marketing_consent_verified: boolean;
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["photo_media"]["Row"],
+          "id" | "created_at" | "marketing_consent_verified"
+        >;
+        Update: Partial<Database["public"]["Tables"]["photo_media"]["Row"]>;
+        Relationships: [];
+      };
+      api_keys: {
+        Row: {
+          id: string;
+          organization_id: string;
+          key_hash: string;
+          key_prefix: string;
+          label: string;
+          scopes: string[];
+          is_active: boolean;
+          rate_limit_per_minute: number;
+          created_at: string;
+          expires_at: string | null;
+          last_used_at: string | null;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["api_keys"]["Row"],
+          "id" | "created_at" | "is_active" | "rate_limit_per_minute" | "scopes"
+        >;
+        Update: Partial<Database["public"]["Tables"]["api_keys"]["Row"]>;
+        Relationships: [];
+      };
+      api_key_usage: {
+        Row: {
+          key_id: string;
+          window_start: string;
+          request_count: number;
+        };
+        Insert: Database["public"]["Tables"]["api_key_usage"]["Row"];
+        Update: Partial<Database["public"]["Tables"]["api_key_usage"]["Row"]>;
+        Relationships: [];
+      };
+      agent_api_log: {
+        Row: {
+          id: string;
+          key_id: string | null;
+          organization_id: string;
+          endpoint: string;
+          method: string;
+          request_body: Json | null;
+          response_status: number | null;
+          response_summary: string | null;
+          duration_ms: number | null;
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["agent_api_log"]["Row"],
+          "id" | "created_at" | "method"
+        >;
+        Update: Partial<Database["public"]["Tables"]["agent_api_log"]["Row"]>;
+        Relationships: [];
+      };
+      workflow_errors: {
+        Row: {
+          id: string;
+          organization_id: string;
+          workflow_name: string;
+          error_message: string | null;
+          payload: Json | null;
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["workflow_errors"]["Row"],
+          "id" | "created_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["workflow_errors"]["Row"]>;
+        Relationships: [];
+      };
+    };
+    Views: Record<string, never>;
+    Functions: {
+      create_channel_with_members: {
+        Args: {
+          p_organization_id: string;
+          p_name: string | null;
+          p_type: "direct" | "group";
+          p_created_by: string;
+          p_member_ids: string[];
+        };
+        Returns: string;
+      };
+      populate_announcement_recipients: {
+        Args: { p_announcement_id: string };
+        Returns: undefined;
+      };
+      get_announcement_analytics: {
+        Args: { p_announcement_id: string };
+        Returns: Json;
+      };
+      get_user_organization_id: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
+      validate_api_key: {
+        Args: { p_key_hash: string };
+        Returns: Json;
+      };
+      upsert_attendance_by_name: {
+        Args: { p_org_id: string; p_records: Json };
+        Returns: Json;
       };
     };
   };
@@ -419,3 +574,7 @@ export type ChannelMember = Database["public"]["Tables"]["channel_members"]["Row
 export type ChannelMessage = Database["public"]["Tables"]["channel_messages"]["Row"];
 export type ChannelTask = Database["public"]["Tables"]["channel_tasks"]["Row"];
 export type ChannelEvent = Database["public"]["Tables"]["channel_events"]["Row"];
+export type Briefing = Database["public"]["Tables"]["briefings"]["Row"];
+export type ApiKey = Database["public"]["Tables"]["api_keys"]["Row"];
+export type AgentApiLog = Database["public"]["Tables"]["agent_api_log"]["Row"];
+export type WorkflowError = Database["public"]["Tables"]["workflow_errors"]["Row"];

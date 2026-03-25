@@ -182,7 +182,7 @@ export default function AttendanceScreen() {
 
     const { error: upsertError } = await supabase
       .from("attendance")
-      .upsert(records, { onConflict: "student_id,class_id,date" });
+      .upsert(records as any, { onConflict: "student_id,class_id,date" });
 
     if (upsertError) {
       setError(t("attendance.saveError"));

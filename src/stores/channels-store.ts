@@ -253,7 +253,7 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
 
     const { data, error } = await supabase
       .from("channel_messages")
-      .insert(insertData)
+      .insert(insertData as any)
       .select("*")
       .single();
 
@@ -550,7 +550,7 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
         title,
         created_by: createdBy,
         assigned_to: assignedTo ?? null,
-      })
+      } as any)
       .select("*")
       .single();
 

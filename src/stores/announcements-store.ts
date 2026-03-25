@@ -333,7 +333,7 @@ export const useAnnouncementsStore = create<AnnouncementsState>((set, get) => ({
     set({
       analytics: {
         ...analytics,
-        [announcementId]: data as AnalyticsSummary,
+        [announcementId]: data as unknown as AnalyticsSummary,
       },
     });
   },

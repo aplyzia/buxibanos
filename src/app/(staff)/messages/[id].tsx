@@ -115,7 +115,7 @@ export default function MessageDetailScreen() {
         response_at: new Date().toISOString(),
         processed_at: new Date().toISOString(),
         thread_id: threadId,
-      })
+      } as any)
       .select()
       .single();
 

@@ -48,12 +48,12 @@ export default function StudentListScreen() {
         .select("*")
         .eq("organization_id", organizationId)
         .eq("enrollment_status", "active")
-        .order("full_name", { ascending: true }),
+        .order("full_name", { ascending: true }) as any,
       supabase
         .from("staff")
         .select("id, full_name")
         .eq("organization_id", organizationId)
-        .eq("is_active", true),
+        .eq("is_active", true) as any,
     ];
 
     // Fetch absence counts for pattern flags (Standard+)
@@ -64,7 +64,7 @@ export default function StudentListScreen() {
           .select("student_id, status")
           .eq("organization_id", organizationId)
           .eq("status", "absent")
-          .gte("date", since30Days)
+          .gte("date", since30Days) as any
       );
     }
 

@@ -103,7 +103,7 @@ export default function ParentSelectScreen() {
         media_urls: [],
         staff_responded: true,
         processed_at: new Date().toISOString(),
-      })
+      } as any)
       .select("id")
       .single();
 

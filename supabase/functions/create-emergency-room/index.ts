@@ -237,6 +237,33 @@ Deno.serve(async (req) => {
     await createLivekitRoom(roomName);
 
     // ── Get staff to notify based on wave ──
+    // Wave 1 requires assigned_teacher_id; look it up from the message's primary student
+    let rpcParams: Record<string, unknown> = { p_organization_id: organization_id };
+
+    if (wave === 1) {
+      // Find the assigned teacher for the student linked to this message
+      const { data: msg } = await sb
+        .from("messages")
+        .select("primary_student_id")
+        .eq("id", message_id)
+        .maybeSingle();
+
+      let teacherId: string | null = null;
+      if (msg?.primary_student_id) {
+        const { data: student } = await sb
+          .from("students")
+          .select("assigned_teacher_id")
+          .eq("id", msg.primary_student_id)
+          .maybeSingle();
+        teacherId = student?.assigned_teacher_id ?? null;
+      }
+
+      rpcParams = {
+        p_organization_id: organization_id,
+        p_assigned_teacher_id: teacherId,
+      };
+    }
+
     const rpcName =
       wave === 1
         ? "get_emergency_wave1_staff"
@@ -244,8 +271,9 @@ Deno.serve(async (req) => {
         ? "get_emergency_wave2_staff"
         : "get_emergency_wave3_staff";
 
-    const { data: staffRaw } = await sb.rpc(rpcName, { p_organization_id: organization_id });
-    const staffList: { staff_id: string; full_name: string; push_token: string | null }[] =
+    const { data: staffRaw } = await sb.rpc(rpcName, rpcParams);
+    // RPC returns objects with `id` (not `staff_id`), `full_name`, `push_token`
+    const staffList: { id: string; full_name: string; push_token: string | null }[] =
       Array.isArray(staffRaw) ? staffRaw : [];
 
     // ── Generate tokens + collect push tokens ──
@@ -254,7 +282,7 @@ Deno.serve(async (req) => {
 
     for (const staff of staffList) {
       const token = await livekitToken(
-        staff.staff_id,
+        staff.id,
         staff.full_name,
         {
           roomJoin: true,
@@ -263,7 +291,7 @@ Deno.serve(async (req) => {
           canSubscribe: true,
         }
       );
-      participantTokens[staff.staff_id] = token;
+      participantTokens[staff.id] = token;
       if (staff.push_token) pushTokens.push(staff.push_token);
     }
 

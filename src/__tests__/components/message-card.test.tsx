@@ -9,30 +9,33 @@ import "./setup";
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { MessageCard } from "@/components/messages/message-card";
+import type { Message } from "@/types/database";
 
-const BASE_MESSAGE = {
+const BASE_MESSAGE: Message = {
   id: "msg-1",
   organization_id: "org-1",
-  sender_user_id: "user-1",
-  sender_name: "王小明",
-  sender_role: "parent" as const,
-  receiver_name: "李老師",
-  original_content: "小華今天請假",
-  summary: "學生請假通知",
-  priority: "high" as const,
-  message_type: "attendance" as const,
-  action_required: true,
-  staff_responded: false,
-  primary_student: "王小華",
-  primary_student_id: "stu-1",
   thread_id: null,
+  sender_name: "王小明",
+  sender_type: "parent",
+  sender_user_id: "user-1",
+  receiver_name: "李老師",
+  receiver_type: "teacher",
+  primary_student: "王小華",
+  additional_students: [],
+  message_type: "attendance",
+  priority: "high",
+  action_required: true,
+  summary: "學生請假通知",
+  context: null,
+  original_content: "小華今天請假",
+  media_urls: [],
+  confidence: "high",
+  reasoning: null,
+  staff_responded: false,
+  response_at: null,
   processed_at: new Date().toISOString(),
   created_at: new Date().toISOString(),
-  channel: "line" as const,
-  line_message_id: null,
-  media_urls: null,
-  ai_reply_draft: null,
-  assigned_teacher_id: null,
+  updated_at: new Date().toISOString(),
 };
 
 describe("MessageCard", () => {

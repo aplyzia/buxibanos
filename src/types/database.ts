@@ -264,6 +264,8 @@ export interface Database {
           allow_free_text: boolean;
           expires_at: string | null;
           priority: "normal" | "urgent";
+          is_public: boolean;
+          public_slug: string | null;
           created_by: string;
           created_at: string;
           updated_at: string;
@@ -281,6 +283,8 @@ export interface Database {
           | "allow_free_text"
           | "expires_at"
           | "priority"
+          | "is_public"
+          | "public_slug"
         > & {
           media_urls?: Json;
           target_type?: "all" | "by_class" | "individual";
@@ -290,6 +294,8 @@ export interface Database {
           allow_free_text?: boolean;
           expires_at?: string | null;
           priority?: "normal" | "urgent";
+          is_public?: boolean;
+          public_slug?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["announcements"]["Row"]>;
         Relationships: [];
@@ -551,6 +557,10 @@ export interface Database {
       upsert_attendance_by_name: {
         Args: { p_org_id: string; p_records: Json };
         Returns: Json;
+      };
+      set_announcement_public: {
+        Args: { p_announcement_id: string; p_is_public: boolean };
+        Returns: string | null;
       };
     };
   };

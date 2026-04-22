@@ -64,6 +64,10 @@ interface AnnouncementsState {
   createAnnouncement: (params: CreateAnnouncementParams) => Promise<string | null>;
   fetchAnalytics: (announcementId: string) => Promise<void>;
   fetchRecipientDetails: (announcementId: string) => Promise<void>;
+  setAnnouncementPublic: (
+    announcementId: string,
+    isPublic: boolean
+  ) => Promise<string | null>;
 }
 
 export const useAnnouncementsStore = create<AnnouncementsState>((set, get) => ({
@@ -374,5 +378,35 @@ export const useAnnouncementsStore = create<AnnouncementsState>((set, get) => ({
         [announcementId]: details,
       },
     });
+  },
+
+  setAnnouncementPublic: async (announcementId, isPublic) => {
+    const { data, error } = await supabase.rpc("set_announcement_public", {
+      p_announcement_id: announcementId,
+      p_is_public: isPublic,
+    });
+
+    if (error) {
+      console.error("[setAnnouncementPublic] error:", error.message);
+      return null;
+    }
+
+    // data is the new public_slug (or null when disabling)
+    const slug = (data as string | null) ?? null;
+
+    // Update local staffAnnouncements cache
+    set({
+      staffAnnouncements: get().staffAnnouncements.map((a) =>
+        a.id === announcementId
+          ? {
+              ...a,
+              is_public: isPublic,
+              public_slug: isPublic ? slug ?? a.public_slug : a.public_slug,
+            }
+          : a
+      ),
+    });
+
+    return slug;
   },
 }));

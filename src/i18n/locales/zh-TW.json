@@ -316,7 +316,16 @@
     "removeAttachment": "移除",
     "viewDetails": "查看詳情",
     "aiPolish": "AI 潤稿",
-    "aiPolishHint": "Claude AI 將在發送前優化您的訊息內容"
+    "aiPolishHint": "Claude AI 將在發送前優化您的訊息內容",
+    "shareSection": "對外分享",
+    "makePublic": "公開此公告",
+    "makePublicHint": "建立公開連結後，可分享到 Facebook、LINE 或學校網站",
+    "publicLink": "公開連結",
+    "shareButton": "分享",
+    "copyLink": "複製連結",
+    "linkCopied": "連結已複製",
+    "shareError": "分享失敗",
+    "shareMessage": "{{title}} - {{org}}"
   },
   "analytics": {
     "title": "數據分析",

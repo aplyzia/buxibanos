@@ -9,10 +9,12 @@ import {
   Image,
   Linking,
   Modal,
+  Switch,
+  Share,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { ChevronLeft, ChevronDown, ChevronUp, FileText, ExternalLink, Play, X } from "lucide-react-native";
+import { ChevronLeft, ChevronDown, ChevronUp, FileText, ExternalLink, Play, X, Share2 } from "lucide-react-native";
 import { useAnnouncementsStore } from "@/stores/announcements-store";
 import { AnnouncementRecipient } from "@/types/database";
 import GlassBackground from "@/components/common/glass-background";
@@ -32,7 +34,9 @@ export default function AnnouncementAnalyticsScreen() {
     recipientDetails,
     fetchAnalytics,
     fetchRecipientDetails,
+    setAnnouncementPublic,
   } = useAnnouncementsStore();
+  const [isTogglingPublic, setIsTogglingPublic] = useState(false);
 
   const announcement = staffAnnouncements.find((a) => a.id === id);
   const stats = id ? analytics[id] : undefined;
@@ -200,6 +204,25 @@ export default function AnnouncementAnalyticsScreen() {
             )}
           </GlassCard>
         </Pressable>
+
+        {/* Public sharing */}
+        <SharePublicCard
+          announcementId={announcement.id}
+          isPublic={announcement.is_public}
+          publicSlug={announcement.public_slug}
+          title={announcement.title}
+          isToggling={isTogglingPublic}
+          onToggle={async (next) => {
+            setIsTogglingPublic(true);
+            try {
+              await setAnnouncementPublic(announcement.id, next);
+            } finally {
+              setIsTogglingPublic(false);
+            }
+          }}
+          colors={colors}
+          t={t}
+        />
 
         {/* Summary stats */}
         {stats && (
@@ -463,5 +486,110 @@ function RecipientRow({
         </Text>
       </View>
     </View>
+  );
+}
+
+function buildPublicUrl(slug: string): string {
+  const base = process.env.EXPO_PUBLIC_SUPABASE_URL ?? "";
+  return `${base}/functions/v1/announcement-public?s=${encodeURIComponent(slug)}`;
+}
+
+function SharePublicCard({
+  announcementId: _announcementId,
+  isPublic,
+  publicSlug,
+  title,
+  isToggling,
+  onToggle,
+  colors,
+  t,
+}: {
+  announcementId: string;
+  isPublic: boolean;
+  publicSlug: string | null;
+  title: string;
+  isToggling: boolean;
+  onToggle: (next: boolean) => Promise<void>;
+  colors: any;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+}) {
+  const publicUrl = publicSlug ? buildPublicUrl(publicSlug) : null;
+
+  const handleShare = async () => {
+    if (!publicUrl) return;
+    try {
+      await Share.share({
+        message: `${title}\n${publicUrl}`,
+        url: publicUrl,
+        title,
+      });
+    } catch (e) {
+      console.warn("[share] failed:", e);
+    }
+  };
+
+  return (
+    <GlassCard className="p-4 mb-4">
+      <Text
+        className="text-xs font-semibold uppercase tracking-wider mb-2"
+        style={{ color: colors.textMuted }}
+      >
+        {t("announcements.shareSection")}
+      </Text>
+
+      <View className="flex-row items-start justify-between mb-1">
+        <View className="flex-1 mr-3">
+          <Text className="text-sm font-medium" style={{ color: colors.textPrimary }}>
+            {t("announcements.makePublic")}
+          </Text>
+          <Text className="text-xs mt-0.5" style={{ color: colors.textMuted }}>
+            {t("announcements.makePublicHint")}
+          </Text>
+        </View>
+        <Switch
+          value={isPublic}
+          onValueChange={(v) => onToggle(v)}
+          disabled={isToggling}
+        />
+      </View>
+
+      {isPublic && publicUrl && (
+        <View className="mt-3">
+          <Text className="text-xs mb-1" style={{ color: colors.textMuted }}>
+            {t("announcements.publicLink")}
+          </Text>
+          <Pressable
+            onPress={() => Linking.openURL(publicUrl)}
+            className="px-3 py-2 rounded-lg mb-2 active:opacity-70"
+            style={{
+              backgroundColor: colors.surfaceBg,
+              borderWidth: 1,
+              borderColor: colors.surfaceBorder,
+            }}
+          >
+            <Text
+              className="text-xs"
+              numberOfLines={1}
+              style={{ color: colors.accentColor }}
+            >
+              {publicUrl}
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={handleShare}
+            className="flex-row items-center justify-center px-4 py-3 rounded-xl active:opacity-80"
+            style={{ backgroundColor: colors.accentBg }}
+          >
+            <Share2 size={16} color={colors.accentColor} />
+            <Text
+              className="ml-2 text-sm font-semibold"
+              style={{ color: colors.accentColor }}
+            >
+              {t("announcements.shareButton")}
+            </Text>
+          </Pressable>
+        </View>
+      )}
+    </GlassCard>
   );
 }

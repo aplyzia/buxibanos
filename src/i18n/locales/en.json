@@ -316,7 +316,16 @@
     "removeAttachment": "Remove",
     "viewDetails": "View Details",
     "aiPolish": "AI Polish",
-    "aiPolishHint": "Claude AI will refine your message before sending"
+    "aiPolishHint": "Claude AI will refine your message before sending",
+    "shareSection": "Share Publicly",
+    "makePublic": "Make this announcement public",
+    "makePublicHint": "Creates a shareable link for Facebook, LINE, or the school website",
+    "publicLink": "Public link",
+    "shareButton": "Share",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "shareError": "Failed to share",
+    "shareMessage": "{{title}} - {{org}}"
   },
   "analytics": {
     "title": "Analytics",
